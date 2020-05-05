@@ -26,7 +26,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2020050500;
+$plugin->version   = 2020050501;
 $plugin->requires  = 2013110500;
 $plugin->component = 'local_cleanurls';
 
