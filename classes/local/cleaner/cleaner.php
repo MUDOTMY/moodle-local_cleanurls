@@ -153,7 +153,7 @@ class cleaner {
         while ($catid) {
             $cat = $DB->get_record('course_categories', ['id' => $catid]);
             $slug = clean_moodle_url::sluggify($cat->name, false);
-            $newpath = '/'.$slug.$newpath;
+            $newpath = '/'.$slug.'-'.$catid.$newpath;
             $catid = $cat->parent;
         }
         $newpath = '/category'.$newpath;
@@ -204,126 +204,126 @@ class cleaner {
         return $course;
     }
 
-    private function clean_course_module_view($mod) {
-        if (empty($this->params['id'])) {
-            return false;
-        }
+    // private function clean_course_module_view($mod) {
+    //     if (empty($this->params['id'])) {
+    //         return false;
+    //     }
 
-        $id = $this->params['id'];
-        list($course, $cm) = get_course_and_cm_from_cmid($id, $mod);
+    //     $id = $this->params['id'];
+    //     list($course, $cm) = get_course_and_cm_from_cmid($id, $mod);
 
-        $subpath = $this->clean_course_module_view_format($course, $cm);
-        $shortname = urlencode($course->shortname);
-        $newpath = "/course/{$shortname}{$subpath}";
+    //     $subpath = $this->clean_course_module_view_format($course, $cm);
+    //     $shortname = urlencode($course->shortname);
+    //     $newpath = "/course/{$shortname}{$subpath}";
 
-        if ($this->check_path_allowed($newpath)) {
-            $this->path = $newpath;
-            unset($this->params['id']);
-            clean_moodle_url::log("Rewrite mod view: {$this->path}");
-        }
+    //     if ($this->check_path_allowed($newpath)) {
+    //         $this->path = $newpath;
+    //         unset($this->params['id']);
+    //         clean_moodle_url::log("Rewrite mod view: {$this->path}");
+    //     }
 
-        return true;
-    }
+    //     return true;
+    // }
 
-    private function clean_course_module_view_format(stdClass $course, cm_info $cm) {
-        // Try to find a clean handler for the course format.
-        $classname = clean_moodle_url::get_format_support($course->format);
-        if (!is_null($classname)) {
-            return '/' . $classname::get_courseformat_module_clean_subpath($course, $cm);
-        }
+    // private function clean_course_module_view_format(stdClass $course, cm_info $cm) {
+    //     // Try to find a clean handler for the course format.
+    //     $classname = clean_moodle_url::get_format_support($course->format);
+    //     if (!is_null($classname)) {
+    //         return '/' . $classname::get_courseformat_module_clean_subpath($course, $cm);
+    //     }
 
-        // Default behaviour.
-        $title = clean_moodle_url::sluggify($cm->name, true);
-        return "/{$cm->modname}/{$cm->id}{$title}";
-    }
+    //     // Default behaviour.
+    //     $title = clean_moodle_url::sluggify($cm->name, true);
+    //     return "/{$cm->modname}/{$cm->id}{$title}";
+    // }
 
-    private function clean_course_modules($mod) {
-        global $DB;
+    // private function clean_course_modules($mod) {
+    //     global $DB;
 
-        if (empty($this->params['id'])) {
-            return false;
-        }
+    //     if (empty($this->params['id'])) {
+    //         return false;
+    //     }
 
-        $slug = $DB->get_field('course', 'shortname', ['id' => $this->params['id']]);
-        $slug = urlencode($slug);
-        $newpath = "/course/{$slug}/{$mod}";
-        if ($this->check_path_allowed($newpath)) {
-            $this->path = $newpath;
-            unset($this->params['id']);
-            clean_moodle_url::log("Rewrite mod view: {$this->path}");
-        }
+    //     $slug = $DB->get_field('course', 'shortname', ['id' => $this->params['id']]);
+    //     $slug = urlencode($slug);
+    //     $newpath = "/course/{$slug}/{$mod}";
+    //     if ($this->check_path_allowed($newpath)) {
+    //         $this->path = $newpath;
+    //         unset($this->params['id']);
+    //         clean_moodle_url::log("Rewrite mod view: {$this->path}");
+    //     }
 
-        return true;
-    }
+    //     return true;
+    // }
 
-    private function clean_course_users() {
-        global $DB;
+    // private function clean_course_users() {
+    //     global $DB;
 
-        if (empty($this->params['id'])) {
-            return false;
-        }
+    //     if (empty($this->params['id'])) {
+    //         return false;
+    //     }
 
-        $newpath = $DB->get_field('course', 'shortname', ['id' => $this->params['id']]);
-        $newpath = '/course/'.urlencode($newpath).'/user';
-        if ($this->check_path_allowed($newpath)) {
-            $this->path = $newpath;
-            unset($this->params['id']);
-            clean_moodle_url::log('Rewrite course users');
-        }
+    //     $newpath = $DB->get_field('course', 'shortname', ['id' => $this->params['id']]);
+    //     $newpath = '/course/'.urlencode($newpath).'/user';
+    //     if ($this->check_path_allowed($newpath)) {
+    //         $this->path = $newpath;
+    //         unset($this->params['id']);
+    //         clean_moodle_url::log('Rewrite course users');
+    //     }
 
-        return true;
-    }
+    //     return true;
+    // }
 
-    private function clean_user_in_course() {
-        global $DB;
+    // private function clean_user_in_course() {
+    //     global $DB;
 
-        if (empty($this->params['id']) || empty($this->params['course'])) {
-            return false;
-        }
+    //     if (empty($this->params['id']) || empty($this->params['course'])) {
+    //         return false;
+    //     }
 
-        $username = $DB->get_field('user', 'username', ['id' => $this->params['id']]);
-        $username = urlencode($username);
-        $newpath = "/user/{$username}";
+    //     $username = $DB->get_field('user', 'username', ['id' => $this->params['id']]);
+    //     $username = urlencode($username);
+    //     $newpath = "/user/{$username}";
 
-        if ($this->params['course'] != 1) {
-            $coursename = $DB->get_field('course', 'shortname', ['id' => $this->params['course']]);
-            $coursename = urlencode($coursename);
-            $newpath = "/course/{$coursename}{$newpath}";
-            unset($this->params['course']);
-        }
+    //     if ($this->params['course'] != 1) {
+    //         $coursename = $DB->get_field('course', 'shortname', ['id' => $this->params['course']]);
+    //         $coursename = urlencode($coursename);
+    //         $newpath = "/course/{$coursename}{$newpath}";
+    //         unset($this->params['course']);
+    //     }
 
-        if ($this->check_path_allowed($newpath)) {
-            $this->path = $newpath;
-            unset($this->params['id']);
-            clean_moodle_url::log('Rewrite user profile in course');
-        }
+    //     if ($this->check_path_allowed($newpath)) {
+    //         $this->path = $newpath;
+    //         unset($this->params['id']);
+    //         clean_moodle_url::log('Rewrite user profile in course');
+    //     }
 
-        return true;
-    }
+    //     return true;
+    // }
 
-    private function clean_user_in_forum() {
-        global $DB;
+    // private function clean_user_in_forum() {
+    //     global $DB;
 
-        $userid = empty($this->params['id']) ? null : $this->params['id'];
-        $mode = empty($this->params['mode']) ? null : $this->params['mode'];
-        if (is_null($userid) || ($mode != 'discussions')) {
-            return false;
-        }
+    //     $userid = empty($this->params['id']) ? null : $this->params['id'];
+    //     $mode = empty($this->params['mode']) ? null : $this->params['mode'];
+    //     if (is_null($userid) || ($mode != 'discussions')) {
+    //         return false;
+    //     }
 
-        $username = $DB->get_field('user', 'username', ['id' => $this->params['id']]);
-        $username = urlencode($username);
-        $mode = urlencode($mode);
-        $newpath = "/user/{$username}/{$mode}";
+    //     $username = $DB->get_field('user', 'username', ['id' => $this->params['id']]);
+    //     $username = urlencode($username);
+    //     $mode = urlencode($mode);
+    //     $newpath = "/user/{$username}/{$mode}";
 
-        if ($this->check_path_allowed($newpath)) {
-            $this->path = $newpath;
-            unset($this->params['id']);
-            unset ($this->params['mode']);
-            clean_moodle_url::log('Rewrite user profile in forum');
-        }
+    //     if ($this->check_path_allowed($newpath)) {
+    //         $this->path = $newpath;
+    //         unset($this->params['id']);
+    //         unset ($this->params['mode']);
+    //         clean_moodle_url::log('Rewrite user profile in forum');
+    //     }
 
-        return true;
-    }
+    //     return true;
+    // }
 
     private function clean_user_profile() {
         global $DB;
