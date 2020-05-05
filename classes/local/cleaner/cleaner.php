@@ -138,71 +138,71 @@ class cleaner {
         return false;
     }
 
-    private function clean_category() {
-        global $DB;
+    // private function clean_category() {
+    //     global $DB;
 
-        if (!isset($this->params['categoryid'])) {
-            return false;
-        }
+    //     if (!isset($this->params['categoryid'])) {
+    //         return false;
+    //     }
 
-        // Clean up category list urls.
-        $catid = $this->params['categoryid'];
-        $newpath = '';
+    //     // Clean up category list urls.
+    //     $catid = $this->params['categoryid'];
+    //     $newpath = '';
 
-        // Grab all ancestor slugs.
-        while ($catid) {
-            $cat = $DB->get_record('course_categories', ['id' => $catid]);
-            $slug = clean_moodle_url::sluggify($cat->name, false);
-            $newpath = '/'.$slug.'-'.$catid.$newpath;
-            $catid = $cat->parent;
-        }
-        $newpath = '/category'.$newpath;
+    //     // Grab all ancestor slugs.
+    //     while ($catid) {
+    //         $cat = $DB->get_record('course_categories', ['id' => $catid]);
+    //         $slug = clean_moodle_url::sluggify($cat->name, false);
+    //         $newpath = '/'.$slug.'-'.$catid.$newpath;
+    //         $catid = $cat->parent;
+    //     }
+    //     $newpath = '/category'.$newpath;
 
-        if ($this->check_path_allowed($newpath)) {
-            $this->path = $newpath;
-            unset ($this->params['categoryid']);
-            clean_moodle_url::log("Rewrite category page");
-        }
+    //     if ($this->check_path_allowed($newpath)) {
+    //         $this->path = $newpath;
+    //         unset ($this->params['categoryid']);
+    //         clean_moodle_url::log("Rewrite category page");
+    //     }
 
-        return true;
-    }
+    //     return true;
+    // }
 
-    private function clean_course_by_id() {
-        if (empty($this->params['id'])) {
-            return null;
-        }
+    // private function clean_course_by_id() {
+    //     if (empty($this->params['id'])) {
+    //         return null;
+    //     }
 
-        $course = get_course($this->params['id']);
+    //     $course = get_course($this->params['id']);
 
-        $newpath = '/course/' . urlencode($course->shortname);
-        if ($this->check_path_allowed($newpath)) {
-            $this->path = $newpath;
-            unset($this->params['id']);
-            clean_moodle_url::log("Rewrite course");
-        }
+    //     $newpath = '/course/' . urlencode($course->shortname);
+    //     if ($this->check_path_allowed($newpath)) {
+    //         $this->path = $newpath;
+    //         unset($this->params['id']);
+    //         clean_moodle_url::log("Rewrite course");
+    //     }
 
-        return $course;
-    }
+    //     return $course;
+    // }
 
-    private function clean_course_by_name() {
-        global $DB;
+    // private function clean_course_by_name() {
+    //     global $DB;
 
-        if (empty($this->params['name'])) {
-            return false;
-        }
+    //     if (empty($this->params['name'])) {
+    //         return false;
+    //     }
 
-        $courseid = $DB->get_field('course', 'id', ['shortname' => $this->params['name']]);
-        $course = get_course($courseid);
+    //     $courseid = $DB->get_field('course', 'id', ['shortname' => $this->params['name']]);
+    //     $course = get_course($courseid);
 
-        $newpath = '/course/' . urlencode($course->shortname);
-        if ($this->check_path_allowed($newpath)) {
-            $this->path = $newpath;
-            unset($this->params['name']);
-            clean_moodle_url::log("Rewrite course by name.");
-        }
+    //     $newpath = '/course/' . urlencode($course->shortname);
+    //     if ($this->check_path_allowed($newpath)) {
+    //         $this->path = $newpath;
+    //         unset($this->params['name']);
+    //         clean_moodle_url::log("Rewrite course by name.");
+    //     }
 
-        return $course;
-    }
+    //     return $course;
+    // }
 
     // private function clean_course_module_view($mod) {
     //     if (empty($this->params['id'])) {
