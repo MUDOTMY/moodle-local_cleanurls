@@ -153,7 +153,7 @@ class cleaner {
         while ($catid) {
             $cat = $DB->get_record('course_categories', ['id' => $catid]);
             $slug = clean_moodle_url::sluggify($cat->name, false);
-            $newpath = '/'.$slug.'-'.$catid.$newpath;
+            $newpath = '/'.$slug.$newpath;
             $catid = $cat->parent;
         }
         $newpath = '/category'.$newpath;
